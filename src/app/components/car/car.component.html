@@ -4,7 +4,15 @@
 </button>
 <div class="alert alert-success" role="alert" style="text-align: center">
     ARABALAR
+</div>
+<div class="mb-3">
+    <label for="filterText" class="form-label">Araba ara:</label>
+    <input type="text" [(ngModel)]="filterText" class="form-control" id="filterText" placeholder="arama ifadesi giriniz">
 </div>  
+<div *ngIf="filterText" class="alert alert-success">
+    {{filterText}} aradınız.
+</div>
+
 <table *ngIf="dataLoaded==true" class="table">
     <thead>
         <tr>
@@ -14,16 +22,18 @@
             <th>Model</th>
             <th>Günlük Ücret</th>
             <th>Açıklama</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let car of cars">
+        <tr *ngFor="let car of cars | filterPipe:filterText">
             <td>{{car.carId}}</td>
             <td>{{car.carName}}</td>
             <td>{{car.colorName}}</td>
             <td>{{car.modelYear}}</td>
             <td>{{car.dailyPrice}}</td>
             <td>{{car.description}}</td>
+            <td><button (click)="addToCart(car)" type="button" class="btn btn-success">Sepete Ekle</button></td>
         </tr>
     </tbody>
     
