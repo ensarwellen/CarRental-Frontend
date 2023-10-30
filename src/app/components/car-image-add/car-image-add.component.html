@@ -1,0 +1,23 @@
+<div class="content">
+    <div class="col-md-12 mt-5">
+      <div class="card">
+        <div class="card-header text-center">
+          <h5 class="title" style="font-weight: 400;">Resim ekle</h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="carImageAddForm">
+          <div class="mb-3">
+            <label for="file">Dosya Seçiniz</label>
+            <div class="form-group">
+              <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
+            </div>
+          </div>
+        </form>
+        </div>
+        <div class="card-footer d-grid">
+          <button class="btn btn-fill btn-success" (click)="onUpload()">Resim Ekle</button>
+          <button class="btn btn-fill btn-danger mt-2" (click)="deleteCarImage()">Resim Sil</button>
+        </div>
+      </div>
+    </div>
+  </div>

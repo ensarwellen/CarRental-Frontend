@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { ListResponseModel } from '../models/listResponseModel';
 import { Car } from '../models/car';
 import { Color } from '../models/color';
+import { SingleResponseModel } from '../models/singleResponseModel';
+import { responseModel } from '../models/responseModel';
 
 @Injectable({
   providedIn: 'root'
@@ -19,9 +21,10 @@ export class CarService {
     return this.httpClient.get<ListResponseModel<Car>>(newPath)
   }
 
-  getCarById(carId:number):Observable<ListResponseModel<Car>>{
+  getCarById(carId:number):Observable<SingleResponseModel<Car>>{
+    console.log(carId+" numaralı id bana geldi. Servis olarak veritabanından getireceğim.")
     let newPath = this.apiUrl + "cars/getbyid?carId=" + carId
-    return this.httpClient.get<ListResponseModel<Car>>(newPath);
+    return this.httpClient.get<SingleResponseModel<Car>>(newPath);
   }
 
   getCarsByBrandId(brandId:number):Observable<ListResponseModel<Car>>{
@@ -33,4 +36,23 @@ export class CarService {
     let newPath=this.apiUrl + "cars/getcarsbycolorid?colorId="+colorId;
     return this.httpClient.get<ListResponseModel<Car>>(newPath)
   }
+
+  getCarsByColorAndBrand(brandId:number, colorId:number){
+    let newUrl = this.apiUrl + 
+    "cars/getcardetailsbycolorandbrand?brandId=" + brandId + "&colorId=" + colorId;
+    return this.httpClient.get<ListResponseModel<Car>>(newUrl);
+  }
+
+  add(car:Car):Observable<SingleResponseModel<Car>>{
+    return this.httpClient.post<SingleResponseModel<Car>>(this.apiUrl+"cars/add",car)
+  }
+  update(car: Car): Observable<SingleResponseModel<Car>> {
+    let newPath = this.apiUrl + 'cars/update';
+    return this.httpClient.post<SingleResponseModel<Car>>(newPath, car);
+  }
+  delete(car:Car):Observable<SingleResponseModel<Car>>{
+    let newPath = this.apiUrl +"Cars/delete";
+    return this.httpClient.post<SingleResponseModel<Car>>(newPath,car);
+  }
+  
 }

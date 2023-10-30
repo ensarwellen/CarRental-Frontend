@@ -1,4 +1,4 @@
-<button *ngIf="dataLoaded==false" class="btn btn-primary" type="button" disabled>
+<!-- <button *ngIf="dataLoaded==false" class="btn btn-primary" type="button" disabled>
     <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
     <span role="status">Loading...</span>
 </button>
@@ -37,4 +37,120 @@
         </tr>
     </tbody>
     
-</table>
+</table> -->
+<div class="row">
+  
+    <div class="mb-3">
+      <input
+        type="text"
+        [(ngModel)]="filterText"
+        class="form-control"
+        id="filterText"
+        placeholder="Model Giriniz."
+      />
+    </div>
+    <div *ngIf="filterText" class="alert alert-success">
+      {{ filterText }} aradınız.
+    </div>
+  
+    <div>
+  
+      
+    </div>
+  
+    <div class="col-md-3">
+      <select
+        [(ngModel)]="brandFilter"
+        class="form-select mb-3"
+        aria-label=".form-select-lg example"
+      >
+        <option value="0" selected>Marka Seçiniz.</option>
+        <option *ngFor="let brand of brands" [value]="brand.id">
+          {{ brand.name }}
+        </option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select
+        [(ngModel)]="colorFilter"
+        class="form-select mb-3"
+        aria-label=".form-select-lg example"
+      >
+        <option value="0" selected>Renk Seçiniz.</option>
+        <option *ngFor="let color of colors" [value]="color.id">
+          {{ color.name }}
+        </option>
+      </select>
+    </div>
+    <div class="col-md-1 buton">
+      <button
+        (click)="getCarsByColorAndBrand(brandFilter, colorFilter)"
+   
+        type="button"
+        class="btn btn-success"
+      >
+        Filtrele
+      </button>
+      
+    </div>
+    
+    <div class="col-md-2 buton">
+      <button
+        routerLink="/cars/add"
+   
+        type="button"
+        class="btn btn-success"
+      >
+        Araç Ekle
+      </button>
+      
+    </div>
+  
+  
+    <div class="cardbody"
+    (click)="setCurrentCar(car)"
+    routerLink="/cars/car/{{ car.carId }}"
+      class="col-md-4"
+      *ngFor="let car of cars | filterPipe : filterText; filter"
+    >
+      <div class="card" style="width: 18rem">
+        
+        
+        
+          <img
+            [src]="getCarImage(car)"
+            class="img-fluid card-img-top resim d-flex size"
+            alt="..."
+          />
+  
+          <div class="card-body">
+            <h3 class="card-title text-center">{{ car.brandName }}</h3>
+          </div>
+          <ul class="list-group list-group-flush text-center text-bolder">
+            <li class="list-group-item">
+              <i><b>Renk</b></i> | {{ car.colorName }}
+            </li>
+            <li class="list-group-item">
+              <i><b>Model Yılı</b></i> | {{ car.modelYear }}
+            </li>
+            <li class="list-group-item">
+              <i><b>Günlük Fiyat</b></i> | {{ car.dailyPrice | currency : "₺ " }}
+            </li>
+            <li class="list-group-item">
+              <i><b>Aylık Fiyat %20 indirimli</b></i>
+              {{ car.dailyPrice * 30 * 0.8 | currency : "₺" }}
+            </li>
+            <a
+          [routerLink]="['/cars', car.carId]"
+          class="btn btn-primary d-block mx-auto"
+          >Detaylar</a
+        >
+          </ul>
+        
+  
+        <button   type="button" class="btn btn-success">Kirala</button>
+      </div>
+      
+      <br />
+    </div>
+  </div>

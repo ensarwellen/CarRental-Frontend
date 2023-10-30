@@ -1,0 +1,65 @@
+<div class="content">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="title">Araba Ekle</h5>
+            </div>
+            <div class="card-body">
+                <form [formGroup]="carAddForm">
+                    <div class="mb-3">
+                        <label for="carName">Marka:</label>
+                        <div class="form-group">
+                            <input type="text" id="carName" formControlName="carName" class="form-control" placeholder="Araba Markası"/>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modelYear">Model Yılı:</label>
+                        <div class="form-group">
+                            <input type="number" id="modelYear" formControlName="modelYear" class="form-control" placeholder="Araba Model Yılı"/>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dailyPrice">Fiyat:</label>
+                        <div class="form-group">
+                            <input type="number" id="dailyPrice" formControlName="dailyPrice" class="form-control" placeholder="Araba Günlük Fiyatı"/>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="brandId">Marka ID:</label>
+                        <div class="form-group">
+                            <select class="form-select" id="brandId" formControlName="brandId" aria-label="Default select example">
+                                <option *ngFor="let brand of brands" value={{brand.id}}>{{brand.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="colorId">Renk ID:</label>
+                        <div class="form-group">
+                            <select class="form-select" id="colorId" formControlName="colorId" aria-label="Default select example">
+                                <option *ngFor="let color of colors" value={{color.id}}>{{color.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description">Açıklama:</label>
+                        <div class="form-group">
+                            <input type="text" id="description" formControlName="description" class="form-control" placeholder="Araba Açıklaması"/>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="imagePath">Araç Fotoğraf:</label>
+                        <div class="form-group">
+                            <input type="file" id="imagePath" formControlName="imagePath" class="form-control" placeholder="Araba Fotoğrafı"/>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-fill btn-primary" (click)="addCar()">Ekle</button>
+                    </div>
+                    
+                </form>
+            </div>
+            
+        </div>
+    </div>
+    
+</div>
