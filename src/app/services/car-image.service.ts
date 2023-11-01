@@ -10,22 +10,33 @@ import { responseModel } from '../models/responseModel';
 })
 export class CarImageService {
 
-  apiURL = 'https://localhost:7183/';
+  apiURL = 'https://localhost:7183/api/';
 
   constructor(private httpClient:HttpClient) { }
  
   getCarImages():Observable<ListResponseModel<CarImage>>{
-   let newPath = this.apiURL + "CarImages/getall"
+   let newPath = this.apiURL + "carImages/getall"
    return this.httpClient.get<ListResponseModel<CarImage>>(newPath);    
   }
   
   addCarImage(file: File,carId: number): Observable<any> {
-    const formData: FormData = new FormData();
-    formData.append('carId', carId.toString());
-    formData.append('file', file);
+    // const formData: FormData = new FormData();
+    // formData.append('carId', carId.toString());
+    // formData.append('file', file);
+    // console.log("Servisteki CarId: "+carId)
     
-    let newPath = this.apiURL + "carImages/add";
-    return this.httpClient.post<any>(newPath, formData);
+    // let newPath = this.apiURL + "carImages/add";
+    // return this.httpClient.post<any>(newPath, formData);
+    const data = {
+      carId: carId
+    };
+  
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+  
+    return this.httpClient.post<any>(this.apiURL + 'carImages/add', formData, {
+      params: data
+    });
   }
   
   getCarImagesByCarId(carId:number):Observable<ListResponseModel<CarImage>>{
@@ -41,7 +52,7 @@ export class CarImageService {
     let newPath = this.apiURL+"uploads/images/="+carImage
     return this.httpClient.get<ListResponseModel<CarImage>>(newPath)
   }
-  deleteCarImage(carImage: CarImage,) {
+  deleteCarImage(carImage: CarImage) {
     let newPath = this.apiURL + "CarImages/Delete";
     return this.httpClient.post(newPath,carImage)
 

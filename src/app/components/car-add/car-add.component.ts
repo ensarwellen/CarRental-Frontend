@@ -21,6 +21,7 @@ export class CarAddComponent implements OnInit {
   brands:Brand[]=[];
   colors:Color[]=[];
   tempCar:Car;
+  selectedImage: File | null;
 
   constructor(private formBuilder:FormBuilder,
     private carService:CarService, private toastrService:ToastrService,
@@ -58,14 +59,19 @@ export class CarAddComponent implements OnInit {
       this.colors = c.data;
     })
   }
-  
+  onImageSelected(event: any) {
+    this.selectedImage = event.target.files[0]; // Seçilen dosyayı al
+  }
 
   addCar(){
     if(this.carAddForm.valid){
       let carModel = Object.assign({},this.carAddForm.value);
       this.carService.add(carModel).subscribe(response=>{
-        console.log(carModel);
         this.tempCar = response.data;
+        console.log("tempCar'ın değerleri : "+this.tempCar.carId);
+        this.carImageService.addCarImage(this.selectedImage,this.tempCar.carId).subscribe(response=>{
+          
+        });
         
         this.toastrService.success("Araba Eklendi","Başarılı");
       });

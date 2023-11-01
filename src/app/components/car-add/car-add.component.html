@@ -49,7 +49,7 @@
                     <div class="mb-3">
                         <label for="imagePath">Araç Fotoğraf:</label>
                         <div class="form-group">
-                            <input type="file" id="imagePath" formControlName="imagePath" class="form-control" placeholder="Araba Fotoğrafı"/>
+                            <input type="file" id="imagePath" (change)="onImageSelected($event)" class="form-control" placeholder="Araba Fotoğrafı"/>
                         </div>
                     </div>
                     <div class="card-footer">
