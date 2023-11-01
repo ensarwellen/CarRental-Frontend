@@ -22,6 +22,8 @@ import { CarImageAddComponent } from './components/car-image-add/car-image-add.c
 import { LoginComponent } from './components/login/login.component';
 import { AuthInterceptor } from 'src/interceptors/auth.interceptor';
 
+import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,7 +38,7 @@ import { AuthInterceptor } from 'src/interceptors/auth.interceptor';
     CarAddComponent,
     CarUpdateComponent,
     CarImageAddComponent,
-    LoginComponent
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -47,6 +49,15 @@ import { AuthInterceptor } from 'src/interceptors/auth.interceptor';
     ReactiveFormsModule,
     ToastrModule.forRoot({
       positionClass:"toast-bottom-right"
+    }),
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: () => {
+          return localStorage.getItem('token');
+        },
+        allowedDomains: ['example.com'],
+        disallowedRoutes: ['example.com/unauthorized'],
+      },
     })
   ],
   providers: [

@@ -3,10 +3,10 @@
     height: 160px;
     object-fit: cover!important;
 }
-.card:hover {
+/* .card:hover {
   cursor: pointer;
-}
-.cardbody{
+} */
+.card-body:hover{
 cursor: pointer;
 }
 .bd-placeholder-img {

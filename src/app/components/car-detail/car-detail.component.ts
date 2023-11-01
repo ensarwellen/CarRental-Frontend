@@ -13,7 +13,7 @@ import { CartService } from 'src/app/services/cart.service';
   styleUrls: ['./car-detail.component.css']
 })
 export class CarDetailComponent implements OnInit{
-  car:Car;
+   car:Car;
    imageUrl = "https://localhost:7183/uploads/images/"
    carImages:CarImage[] = [];
    currentCar:Car
@@ -40,6 +40,14 @@ export class CarDetailComponent implements OnInit{
         
         
       })
+    }
+    
+    generateCarUpdateLink(): string {
+      if (this.car && this.car.carId) {
+        return `/cars/update/${this.car.carId}`;
+      } else {
+        return '/cars'; // Varsayılan URL ya da hata durumu için bir yönlendirme
+      }
     }
     getImageByCarId(carId:number){
       this.carImageService.getByCarId(carId).subscribe(response => {
@@ -68,7 +76,6 @@ export class CarDetailComponent implements OnInit{
 
    
     getCarById(id:number) {
-      console.log(id+" id'li arabayı getir diye servise gidiyorum.");
       this.carService.getCarById(id).subscribe(response => {
       this.car = response.data;
       this.dataLoaded = true;

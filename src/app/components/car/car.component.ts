@@ -6,6 +6,7 @@ import { Brand } from 'src/app/models/brand';
 import { Car } from 'src/app/models/car';
 import { CarImage } from 'src/app/models/carImage';
 import { Color } from 'src/app/models/color';
+import { AuthService } from 'src/app/services/auth.service';
 import { BrandService } from 'src/app/services/brand.service';
 import { CarImageService } from 'src/app/services/car-image.service';
 import { CarService } from 'src/app/services/car.service';
@@ -81,6 +82,8 @@ export class CarComponent implements OnInit {
   filterText ="";
   brandFilter: number = 0;
   colorFilter: number = 0;
+  isAdmin: boolean = false;
+  isAuthenticated:boolean = false;
 
 
   constructor(
@@ -90,10 +93,14 @@ export class CarComponent implements OnInit {
     private brandService:BrandService,
     private colorService:ColorService,
     private toastrService:ToastrService,
-    private cartService:CartService){}
+    private cartService:CartService,
+    private authService:AuthService){}
 
   ngOnInit(): void {
     this.activatedRouted.params.subscribe(params => {
+      this.isUserAuthenticated();
+      this.updateAdminState();
+      this.isUserAdmin();
       if (params["brandId"]) {
         this.getCarsByBrand(params["brandId"])
       }
@@ -104,13 +111,39 @@ export class CarComponent implements OnInit {
         this.getCarById(params["carId"])
       }
       else{
+        
         this.getCars();
         this.getBrands();
         this.getColors();
       }
     });
   }
+  
+  isUserAuthenticated(){
+    this.authService.isAuthenticatedObservable().subscribe(response=>{     
+      this.isAuthenticated = response;
+    })
+  }
 
+  // async isUserAdmin(){
+  //   const userRole = await  this.authService.getUserRole();
+  //   if (userRole === 'admin') {
+  //     this.isAdmin = true;
+  //   }
+  // }
+  async updateAdminState() {
+    const userRole = await this.authService.getUserRole();
+    if (userRole === 'admin') {
+      this.authService.updateAdminState(true);
+    } else {
+      this.authService.updateAdminState(false);
+    }
+  }
+  isUserAdmin(){
+    this.authService.getIsAdminSubject().subscribe((isAdmin) => {
+      this.isAdmin = isAdmin;
+    });
+  }
   getCars(){
     this.carService.getCars(). subscribe((response)=>{
       this.cars=response.data
@@ -181,7 +214,6 @@ export class CarComponent implements OnInit {
   
   reset(){
     this.currentCar = null;
-
   }
 
   addToCart(car:Car){ 

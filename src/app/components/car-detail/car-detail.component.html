@@ -22,7 +22,7 @@
         </button>
       </div> 
 </div>   
-<button class="btn btn-primary mb-3" type="button" routerLink="/cars/update/{{ car.carId }}">Güncelle</button>
+<button class="btn btn-primary mb-3" type="button" [routerLink]="generateCarUpdateLink()">Güncelle</button>
   <br>
     <div class="col-md-9 cardsize" 
     

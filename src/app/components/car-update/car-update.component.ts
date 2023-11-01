@@ -43,7 +43,7 @@ export class CarUpdateComponent implements OnInit,AfterViewInit {
     this.activatedRoute.params.subscribe((params) => {
       this.carId = params['id'];
       this.getCarById(this.carId);
-      this.getCarImages(this.carId);
+      //this.getCarImages(this.carId);
     });
     this.getBrands();
     this.getColors();
@@ -128,11 +128,11 @@ export class CarUpdateComponent implements OnInit,AfterViewInit {
   
 
 
-  getCarImages(carId:number){
-    this.carImageService.getCarImagesByCarId(carId).subscribe(response => {
-      //İlerleyen zamanda birden fazla resim için burasını foreach ile dönerek carousel'e basabilirsin.
-      this.currentCarImagePath = response.data;
-    })
+  // getCarImages(carId:number){
+  //   this.carImageService.getCarImagesByCarId(carId).subscribe(response => {
+  //     //İlerleyen zamanda birden fazla resim için burasını foreach ile dönerek carousel'e basabilirsin.
+  //     this.currentCarImagePath = response.data;
+  //   })
     
-  }
+  // }
 }

@@ -97,7 +97,8 @@
     <div class="col-md-2 buton">
       <button
         routerLink="/cars/add"
-   
+        *ngIf="isAdmin"
+        
         type="button"
         class="btn btn-success"
       >
@@ -109,7 +110,7 @@
   
     <div class="cardbody"
     (click)="setCurrentCar(car)"
-    routerLink="/cars/car/{{ car.carId }}"
+    
       class="col-md-4"
       *ngFor="let car of cars | filterPipe : filterText; filter"
     >
@@ -118,12 +119,14 @@
         
         
           <img
+          style="cursor: pointer;"
+          routerLink="/cars/car/{{ car.carId }}"
             [src]="getCarImage(car)"
             class="img-fluid card-img-top resim d-flex size"
             alt="..."
           />
   
-          <div class="card-body">
+          <div class="card-body" routerLink="/cars/car/{{ car.carId }}">
             <h3 class="card-title text-center">{{ car.brandName }}</h3>
           </div>
           <ul class="list-group list-group-flush text-center text-bolder">
@@ -141,14 +144,16 @@
               {{ car.dailyPrice * 30 * 0.8 | currency : "₺" }}
             </li>
             <a
-          [routerLink]="['/cars', car.carId]"
+            routerLink="/cars/car/{{ car.carId }}"
           class="btn btn-primary d-block mx-auto"
           >Detaylar</a
         >
           </ul>
         
-  
-        <button   type="button" class="btn btn-success">Kirala</button>
+          <div class="card-footer">
+            <button routerLink="rentals" type="button" class="btn btn-success d-block mx-auto">Kirala</button>
+          </div>
+        
       </div>
       
       <br />
