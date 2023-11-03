@@ -6,6 +6,7 @@ import { Car } from '../models/car';
 import { Color } from '../models/color';
 import { SingleResponseModel } from '../models/singleResponseModel';
 import { responseModel } from '../models/responseModel';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -51,7 +52,15 @@ export class CarService {
   }
   delete(car:Car):Observable<SingleResponseModel<Car>>{
     let newPath = this.apiUrl +"Cars/delete";
-    return this.httpClient.post<SingleResponseModel<Car>>(newPath,car);
-  }
+    return this.httpClient.post<SingleResponseModel<Car>>(newPath,car).pipe(tap({
+      next: (response) => {
+        // İsteğe bağlı, bu kısımda da gerekli işlemleri yapabilirsiniz.
+      },
+      error: (error) => {
+        // İsteğe bağlı, bu kısımda da gerekli işlemleri yapabilirsiniz.
+      }
+    })
+  );
+}
   
 }

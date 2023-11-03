@@ -84,6 +84,7 @@ export class CarComponent implements OnInit {
   colorFilter: number = 0;
   isAdmin: boolean = false;
   isAuthenticated:boolean = false;
+  cr: CarImage[] = [];
 
 
   constructor(
@@ -115,6 +116,7 @@ export class CarComponent implements OnInit {
         this.getCars();
         this.getBrands();
         this.getColors();
+        this.getAllCarImages();
       }
     });
   }
@@ -174,15 +176,26 @@ export class CarComponent implements OnInit {
     })
   }
   getCarImage(car:Car){
+    let path; 
     if (car.imagePath == null) {
-      let path = this.imageUrl + "default.jpg"
+      path = this.imageUrl + "default.jpg"
       return path;
 
     }
     else{
-      let path = this.imageUrl + car.imagePath;
-      return path;
+      for (const carImage of this.cr) {
+        if (carImage.carId === car.carId) {
+          path = this.imageUrl + carImage.imagePath;
+          break; // İlk uygun resmi bulduktan sonra döngüyü kır
+        }
+      }
     }
+    return path;
+  }
+  getAllCarImages(){
+    this.carImageService.getCarImages().subscribe(response => {
+      this.cr = response.data;
+    })
   }
   setCurrentCar(car:Car){
     this.currentCar=car;

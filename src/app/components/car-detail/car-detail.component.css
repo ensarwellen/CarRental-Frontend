@@ -1,0 +1,44 @@
+.carousel {
+  max-width: 600px; /* veya istediğiniz maksimum genişlik */
+  position: relative;
+  margin: auto;
+}
+
+.carousel-inner {
+  max-width: 100%;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: auto;
+  object-fit: contain; /* Resmi boyutlandırırken oranları korur */
+  max-height: 400px; /* veya istediğiniz maksimum yükseklik */
+  max-width: 100%; /* Resmin maksimum genişliğini belirler */
+}
+
+.carousel-control-prev, .carousel-control-next {
+  font-size: 30px;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  top: 50%; /* Yukarıdan ortala */
+  transform: translateY(-50%);
+  opacity: 0.7; /* Okları biraz daha solgun yapar */
+  width: 40px; /* Okların genişliğini küçültür */
+  height: 40px; /* Okların yüksekliğini küçültür */
+  margin: 10px; /* Okları biraz daha küçültür */
+}
+
+.carousel-control-prev-icon, .carousel-control-next-icon {
+  background-color: transparent; /* Arka plan rengini kaldırır */
+  border: none; /* Kenar çizgisini kaldırır */
+  outline: none; /* Odak rengini kaldırır */
+  color: white;
+  z-index: 2; /* Okları en üste taşır */
+}
+
+.carousel-inner img {
+  width: 100%; /* Resmi genişliğe göre ölçeklendirir */
+  max-width: 100%; /* Resmin maksimum genişliğini belirler */
+  margin: auto; /* Resmi ortalar */
+}

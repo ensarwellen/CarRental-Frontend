@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { Observable, of } from 'rxjs';
 import { Car } from 'src/app/models/car';
 import { CarImage } from 'src/app/models/carImage';
+import { AuthService } from 'src/app/services/auth.service';
 import { CarImageService } from 'src/app/services/car-image.service';
 import { CarService } from 'src/app/services/car.service';
 import { CartService } from 'src/app/services/cart.service';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-car-detail',
@@ -21,25 +24,41 @@ export class CarDetailComponent implements OnInit{
   //  currentRental:Rental
    currentImage: CarImage;
    dataLoaded = false ;
+   isAdmin: boolean = false;
    
 
   
    constructor(private carService: CarService,
-    private activatedToute:ActivatedRoute,
+    private activatedRoute:ActivatedRoute,
     private carImageService:CarImageService,
     private cartService:CartService,
     private toastrService:ToastrService,
+    private authService:AuthService
     // private renalService:RentalService
    ){}
 
     ngOnInit(): void {
-      this.activatedToute.params.subscribe(params => {
+      this.activatedRoute.params.subscribe(params => {
         this.getCarById(params["carId"])
-        
-          // this.getImageByCarId(params["carId"])
+        this.updateAdminState();
+        this.isUserAdmin();
+        this.getImageByCarId(params["carId"])
         
         
       })
+    }
+    async updateAdminState() {
+      const userRole = await this.authService.getUserRole();
+      if (userRole === 'admin') {
+        this.authService.updateAdminState(true);
+      } else {
+        this.authService.updateAdminState(false);
+      }
+    }
+    isUserAdmin(){
+      this.authService.getIsAdminSubject().subscribe((isAdmin) => {
+        this.isAdmin = isAdmin;
+      });
     }
     
     generateCarUpdateLink(): string {
@@ -51,6 +70,7 @@ export class CarDetailComponent implements OnInit{
     }
     getImageByCarId(carId:number){
       this.carImageService.getByCarId(carId).subscribe(response => {
+        console.log(response)
         this.carImages = response.data;
         this.dataLoaded=true;
 
@@ -58,8 +78,14 @@ export class CarDetailComponent implements OnInit{
     }
 
     getImagePath(carImage: CarImage) {
-      let path = this.imageUrl + carImage.imagePath;
+      if (carImage.imagePath == null) {
+        let path = this.imageUrl + "default.jpg"
+        return path;
+      }else{
+        let path = this.imageUrl + carImage.imagePath;
       return path;
+      }
+      
     }
 
     getCarImage(car:Car){
@@ -73,7 +99,7 @@ export class CarDetailComponent implements OnInit{
         return path;
       }
     }
-
+    
    
     getCarById(id:number) {
       this.carService.getCarById(id).subscribe(response => {

@@ -9,6 +9,8 @@ import { BrandService } from 'src/app/services/brand.service';
 import { CarImageService } from 'src/app/services/car-image.service';
 import { CarService } from 'src/app/services/car.service';
 import { ColorService } from 'src/app/services/color.service';
+import { tap } from 'rxjs/operators';
+import { CarImage } from 'src/app/models/carImage';
 
 @Component({
   selector: 'app-car-update',
@@ -22,6 +24,7 @@ export class CarUpdateComponent implements OnInit,AfterViewInit {
   carId: number;
   currentCar: any;
   currentCarImagePath:any[];
+  tempCarImages: CarImage[];
 
   constructor(
     private brandService: BrandService,
@@ -43,7 +46,7 @@ export class CarUpdateComponent implements OnInit,AfterViewInit {
     this.activatedRoute.params.subscribe((params) => {
       this.carId = params['id'];
       this.getCarById(this.carId);
-      //this.getCarImages(this.carId);
+      this.getCarImages(this.carId);
     });
     this.getBrands();
     this.getColors();
@@ -79,7 +82,7 @@ export class CarUpdateComponent implements OnInit,AfterViewInit {
       this.carService.update(carModel).subscribe(
         (response) => {
           this.toastrService.success('Araba güncellendi', 'Başarılı');
-          this.router.navigate(['list/cars']);
+          this.router.navigate(['/cars']);
         },
         (responseError) => {
           if (responseError.error.Errors.length > 0) {
@@ -101,31 +104,56 @@ export class CarUpdateComponent implements OnInit,AfterViewInit {
     });
   }
 
-  async deleteCar() {
-    //const confirmed = await this.sweetAlertService.confirmDelete();
-  
-    
-    if (this.currentCarImagePath.length > 0) {
-      if (this.currentCarImagePath[0].imagePath == "wwwroot\\Uploads\\Images\\") {
-        this.toastrService.warning("Araç görseli bulunuyor, silme işlemi iptal edildi.", "Uyarı");
-          return; 
-      }
-      
-      
-      // Resim yolu varsayılan yolu ise veya resim yoksa
-      let newCar = Object.assign({}, this.carUpdateForm.value);
-  
-      this.carService.delete(newCar).subscribe(response => {
-          this.toastrService.success("Araç Başarıyla Silindi !", "Dikkat!");
-          this.router.navigate(['list/cars']);
-        },
-        (responseError) => {
-          this.toastrService.error("Araç Silinemedi!", "Hata!");
+  // ------------- Delete Car Operations Begin -------------
+  // #3rd func
+  deleteCarImage(carImage:CarImage){
+    this.carImageService.deleteCarImage(carImage).pipe(
+      tap({
+        next: response=>{
+
+        },error: error=>{
+
         }
-      );
-    }
+      })
+    ).subscribe();
   }
-  
+  // #2nd func
+  async getCarImageByCarId(carId:number){
+    let newCar = Object.assign({}, this.carUpdateForm.value);
+    this.carImageService.getByCarId(carId).pipe(
+      tap({
+        next: response=> {
+          this.tempCarImages = response.data;
+          this.tempCarImages.forEach((carImage:CarImage)=>{
+            if(carImage.imagePath!="DefaultImage.jpg"){
+              this.deleteCarImage(carImage);
+              this.router.navigate(['/cars']);
+              this.toastrService.success("Araç Başarıyla Silindi !", "Dikkat!");
+            }else{
+              this.router.navigate(['/cars']);
+              this.toastrService.success("Araç Başarıyla Silindi !", "Dikkat!");
+            }
+          })
+        }
+      })
+    ).subscribe();
+  }
+  // #1st func
+  async deleteCar(carId:number){
+    let newCar = Object.assign({}, this.carUpdateForm.value);
+    this.carService.delete(newCar).pipe(
+      tap({
+        next: async (response) => {
+          await this.getCarImageByCarId(carId);
+        },
+        error: (error) => {
+          this.toastrService.error("Bir hata meydana geldi", "Dikkat");
+        }
+      })
+    )
+    .subscribe();
+}
+// ------------- Delete Car Operations End -------------
 
 
   getCarImages(carId:number){

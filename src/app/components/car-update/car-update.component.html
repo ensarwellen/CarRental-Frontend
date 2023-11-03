@@ -5,7 +5,7 @@
             <div class="card-body">
                 <form [formGroup]="carUpdateForm" >
                     <div class="mb-3">
-                        <label for="brandId">Brand</label>
+                        <label for="brandId">Marka</label>
                     <select class="form-select mb-3" id="brandId" formControlName="brandId">
                         <option disabled value="">--Marka Seçiniz--</option>
                         <option *ngFor="let brand of brands" [ngValue]="brand.id">
@@ -15,7 +15,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="colorId">Color</label>
+                        <label for="colorId">Renk</label>
                     <select class="form-select mb-3" id="colorId" formControlName="colorId">
                         <option disabled value="">--Renk Seçiniz--</option>
                         <option *ngFor="let color of colors" [ngValue]="color.id">
@@ -54,7 +54,7 @@
             </div>
             <div class="card-footer d-grid">
                 <button class="btn btn-fill btn-success" (click)="update()">Güncelle</button>
-                <button class="btn btn-fill btn-danger mt-2" (click)="deleteCar()">Aracı Sil</button>
+                <button class="btn btn-fill btn-danger mt-2" (click)="deleteCar(carId)">Aracı Sil</button>
                 <button class="btn btn-fill text-white btn-warning mt-2" [routerLink]="['/carImage/add',carId]">Resim İşlemleri</button>
             </div> 
         </div>

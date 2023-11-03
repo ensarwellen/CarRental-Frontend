@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Brand } from 'src/app/models/brand';
 import { Car } from 'src/app/models/car';
@@ -22,11 +23,12 @@ export class CarAddComponent implements OnInit {
   colors:Color[]=[];
   tempCar:Car;
   selectedImage: File | null;
+  images: File[] = [];
 
   constructor(private formBuilder:FormBuilder,
     private carService:CarService, private toastrService:ToastrService,
     private brandService:BrandService, private colorService:ColorService,
-    private carImageService:CarImageService){}
+    private carImageService:CarImageService, private router: Router){}
 
 
   ngOnInit(): void {
@@ -59,21 +61,49 @@ export class CarAddComponent implements OnInit {
       this.colors = c.data;
     })
   }
-  onImageSelected(event: any) {
-    this.selectedImage = event.target.files[0]; // Seçilen dosyayı al
+  generateCarUpdateLink(): string {
+    return '/cars'; // Varsayılan URL ya da hata durumu için bir yönlendirme
   }
-
+  // onImageSelected(event: any) {
+  //   if(event.target.files){
+  //     this.selectedImage = event.target.files[0]; // Seçilen dosyayı al
+  //   }else{
+  //     return;
+  //   }
+    
+  // }
+  onImageSelected(event: any) {
+    this.images = [];
+    if(event.files){
+      for (let file of event.files) {
+        this.images.push(file);
+      }
+      //let plural = this.images.length > 1 ? 's' : '';
+      this.toastrService.success(`${this.images.length} görsel seçildi`);
+    }else{
+      return;
+    }
+    
+  }
+  
+  addCarImage(carId:number){
+    this.carImageService.uploadImages(this.images, carId).subscribe(response=>{
+      this.router.navigate(['/cars']);
+    });
+  }
   addCar(){
     if(this.carAddForm.valid){
       let carModel = Object.assign({},this.carAddForm.value);
       this.carService.add(carModel).subscribe(response=>{
         this.tempCar = response.data;
-        console.log("tempCar'ın değerleri : "+this.tempCar.carId);
-        this.carImageService.addCarImage(this.selectedImage,this.tempCar.carId).subscribe(response=>{
-          
-        });
+        if(this.images!=null){
+          this.addCarImage(this.tempCar.carId);
+          this.toastrService.success("Araba Eklendi","Başarılı");
+        }else{
+          this.router.navigate(['/cars']);
+          this.toastrService.success("Araba Eklendi","Başarılı");
+        }
         
-        this.toastrService.success("Araba Eklendi","Başarılı");
       });
       
     }else{
