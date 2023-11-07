@@ -37,6 +37,24 @@ export class AuthService {
     }
     return null;
   }
+  isTokenValid(): boolean {
+    const token = this.getToken();
+    if (token) {
+      return !this.jwtHelper.isTokenExpired(token);
+    }
+    return false;
+  }
+
+  getUserId(): number | null {
+    const token = this.getToken();
+    if (token) {
+      const decodedToken = this.jwtHelper.decodeToken(token);
+      // Örneğin, token içinde userID alanı varsa bu şekilde alabilirsiniz
+      const userId = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+      return userId ? userId : null;
+    }
+    return null;
+  }
 
   public async getUserRole(): Promise<string | null> {
     let decodedToken = null;

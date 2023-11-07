@@ -96,9 +96,9 @@
     
     <div class="col-md-2 buton">
       <button
-        routerLink="/cars/add"
-        *ngIf="isAdmin"
         
+        *ngIf="isAdmin"
+        (click)="isTokenValid()"
         type="button"
         class="btn btn-success"
       >
@@ -151,7 +151,7 @@
           </ul>
         
           <div class="card-footer">
-            <button routerLink="rentals" type="button" class="btn btn-success d-block mx-auto">Kirala</button>
+            <button routerLink="cars/car/rental/{{car.carId}}" type="button" class="btn btn-success d-block mx-auto">Kirala</button>
           </div>
         
       </div>

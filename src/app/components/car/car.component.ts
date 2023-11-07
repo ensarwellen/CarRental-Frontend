@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Brand } from 'src/app/models/brand';
 
@@ -95,7 +95,8 @@ export class CarComponent implements OnInit {
     private colorService:ColorService,
     private toastrService:ToastrService,
     private cartService:CartService,
-    private authService:AuthService){}
+    private authService:AuthService,
+    private router: Router){}
 
   ngOnInit(): void {
     this.activatedRouted.params.subscribe(params => {
@@ -125,6 +126,14 @@ export class CarComponent implements OnInit {
     this.authService.isAuthenticatedObservable().subscribe(response=>{     
       this.isAuthenticated = response;
     })
+  }
+  isTokenValid(){
+    if(this.authService.isTokenValid() && this.isAdmin){
+      this.router.navigate(['/cars/add']);
+    }else{
+      this.authService.logout();
+      this.router.navigate(['/login']);
+    }
   }
 
   // async isUserAdmin(){

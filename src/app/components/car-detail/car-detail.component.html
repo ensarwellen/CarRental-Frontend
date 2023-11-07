@@ -31,7 +31,7 @@
           <li class="list-group-item"><i><b>Günlük Fiyat</b></i> | {{car.dailyPrice  | currency:"₺ " }}</li>
           <li class="list-group-item"><i><b>Aylık Fiyat %20 indirimli</b></i>  {{(car.dailyPrice * 30) * 0.8 | currency:"₺"}}</li>
         </ul>
-        <button (click)="addToCart(car)" type="button" class="btn btn-success">Aracı Şimdi Kirala</button>
+        <button routerLink="/cars/car/rental/{{car.carId}}"  type="button" class="btn btn-success">Aracı Şimdi Kirala</button>
       </div>
     </div>
   </div>

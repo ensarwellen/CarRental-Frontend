@@ -8,6 +8,7 @@ import { CarImageAddComponent } from './components/car-image-add/car-image-add.c
 import { LoginComponent } from './components/login/login.component';
 import { LoginGuard } from './guards/login.guard';
 import { IsAddableGuard } from './guards/is-addable.guard';
+import { RentalComponent } from './components/rental/rental.component';
 ;
 
 const routes: Routes = [
@@ -16,6 +17,7 @@ const routes: Routes = [
   {path:"cars/brand/:brandId",component:CarComponent},
   {path:"cars/color/:colorId",component:CarComponent},
   {path:"cars/car/:carId",component:CarDetailComponent},
+  {path:"cars/car/rental/:carId",component:RentalComponent},
   {path:"cars/add",component:CarAddComponent, canActivate:[LoginGuard,IsAddableGuard]},
   {path:"cars/update/:id",component:CarUpdateComponent},
   {path:"carImage/add/:carId",component:CarImageAddComponent},

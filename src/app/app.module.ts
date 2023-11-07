@@ -23,6 +23,7 @@ import { LoginComponent } from './components/login/login.component';
 import { AuthInterceptor } from 'src/interceptors/auth.interceptor';
 
 import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
+import { RentalComponent } from './components/rental/rental.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
     CarUpdateComponent,
     CarImageAddComponent,
     LoginComponent,
+    RentalComponent,
   ],
   imports: [
     BrowserModule,
