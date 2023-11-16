@@ -25,7 +25,8 @@ export class CarDetailComponent implements OnInit{
    currentImage: CarImage;
    dataLoaded = false ;
    isAdmin: boolean = false;
-   
+   isAuthenticated:boolean=false;
+   tokenValid:boolean=false;
 
   
    constructor(private carService: CarService,
@@ -40,8 +41,8 @@ export class CarDetailComponent implements OnInit{
     ngOnInit(): void {
       this.activatedRoute.params.subscribe(params => {
         this.getCarById(params["carId"])
-        this.updateAdminState();
-        this.isUserAdmin();
+        this.isUserAuthenticated();
+        this.checkUserStats();
         this.getImageByCarId(params["carId"])
         
         
@@ -54,6 +55,30 @@ export class CarDetailComponent implements OnInit{
       } else {
         this.authService.updateAdminState(false);
       }
+    }
+    async checkUserStats() {
+      await this.updateAdminState();
+      this.isTokenValid();
+      this.isUserAdmin();
+    }
+
+    isUserAuthenticated(){
+      this.authService.isAuthenticatedObservable().subscribe(response=>{     
+        this.isAuthenticated = response;
+      })
+    }
+    isTokenValid(){
+      if(this.isAuthenticated){
+        if(this.authService.isTokenValid()){
+          return true;
+        }else{
+          this.isAdmin=false;
+          alert("Oturumun süresi doldu");
+          this.authService.logout();      
+          return false;
+        }
+      }
+      return false;
     }
     isUserAdmin(){
       this.authService.getIsAdminSubject().subscribe((isAdmin) => {
@@ -70,7 +95,6 @@ export class CarDetailComponent implements OnInit{
     }
     getImageByCarId(carId:number){
       this.carImageService.getByCarId(carId).subscribe(response => {
-        console.log(response)
         this.carImages = response.data;
         this.dataLoaded=true;
 

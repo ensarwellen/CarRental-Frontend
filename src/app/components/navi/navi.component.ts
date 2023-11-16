@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -9,16 +10,20 @@ import { AuthService } from 'src/app/services/auth.service';
 export class NaviComponent implements OnInit {
 
   login:boolean=false;
-  constructor(private authService:AuthService){}
+  constructor(private authService:AuthService, private toastrService:ToastrService){}
 
   ngOnInit(): void {
-    this.authService.isAuthenticatedObservable().subscribe((isAuthenticated) => {
-      this.login = isAuthenticated;
-    });
+    this.isUserAuthenticated();
+  }
+  isUserAuthenticated(){
+    this.authService.isAuthenticatedObservable().subscribe(response=>{     
+      this.login = response;
+    })
   }
 
   logout() {
-    this.authService.logout(); // AuthService içindeki logout fonksiyonunu çağırarak çıkış yapabilirsiniz.
+    this.authService.logout();
+    this.toastrService.success("Çıkış yapıldı","Başarılı") 
   }
 
 }

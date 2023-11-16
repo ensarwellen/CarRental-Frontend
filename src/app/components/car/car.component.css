@@ -6,6 +6,12 @@
 /* .card:hover {
   cursor: pointer;
 } */
+.list-group-item:hover{
+  cursor: pointer;
+}
+.page-item:hover{
+  cursor:pointer;
+}
 .card-body:hover{
 cursor: pointer;
 }

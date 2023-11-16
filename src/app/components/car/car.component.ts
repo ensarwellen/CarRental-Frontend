@@ -18,57 +18,7 @@ import { ColorService } from 'src/app/services/color.service';
   templateUrl: './car.component.html',
   styleUrls: ['./car.component.css']
 })
-// export class CarComponent implements OnInit {
 
-//   filterText:string="";
-//   cars:Car[]=[];
-//   dataLoaded=false;
-//   constructor(private carService:CarService,
-//     private activatedRoute:ActivatedRoute,
-//     private toastrService:ToastrService,
-//     private cartService:CartService){
-
-//   }
-//   ngOnInit(): void {
-//     this.activatedRoute.params.subscribe(params=>{
-//       if(params["brandId"]){
-//         this.getCarsByBrandId(params["brandId"]);
-//       }else if(params["colorId"]){
-//         this.getCarsByColorId(params["colorId"]);
-//       }else{
-//         this.getCars();
-//       }
-//     })
-    
-//   }
-
-//   getCars(){
-//     this.carService.getCars().subscribe(response=>{
-//       this.cars = response.data;
-//       this.dataLoaded=true;
-//     })
-//   }
-
-//   getCarsByBrandId(brandId:number){
-//     this.carService.getCarsByBrandId(brandId).subscribe(response=>{
-//       this.cars = response.data;
-//       this.dataLoaded=true;
-//     })
-//   }
-
-//   getCarsByColorId(colorId:number){
-//     this.carService.getCarsByColorId(colorId).subscribe(response=>{
-//       this.cars = response.data;
-//       this.dataLoaded=true;
-//     })
-//   }
-
-//   addToCart(car:Car){
-//     this.toastrService.success(car.carName,"Sepete Eklendi");
-//     this.cartService.addToCart(car);
-//   }
-
-// }
 export class CarComponent implements OnInit {
   cars : Car[]=[];
   brands: Brand[]=[];
@@ -85,7 +35,11 @@ export class CarComponent implements OnInit {
   isAdmin: boolean = false;
   isAuthenticated:boolean = false;
   cr: CarImage[] = [];
-
+  currentPage:number;
+  pageCount:number;
+  pages:number[]=[];
+  currentColor:number;
+  currentBrand:number;
 
   constructor(
     private carService : CarService,
@@ -101,25 +55,32 @@ export class CarComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRouted.params.subscribe(params => {
       this.isUserAuthenticated();
-      this.updateAdminState();
-      this.isUserAdmin();
+      this.checkUserStats();
+      this.getAllCarImages();
+      this.orderPages();
       if (params["brandId"]) {
-        this.getCarsByBrand(params["brandId"])
+        this.getCarsByBrand(params["brandId"],1)
       }
       else if(params["colorId"] ){
-        this.getCarByColor(params["colorId"])
+        this.getCarByColor(params["colorId"],1)       
       }
       else if (params["carId"]) {
         this.getCarById(params["carId"])
       }
       else{
         
-        this.getCars();
+        //this.getCars();
+         this.GetCarsWithPagination(1);
         this.getBrands();
         this.getColors();
-        this.getAllCarImages();
+        
       }
     });
+  }
+  async checkUserStats() {
+    await this.updateAdminState();
+    this.isTokenValid();
+    this.isUserAdmin();
   }
   
   isUserAuthenticated(){
@@ -127,21 +88,27 @@ export class CarComponent implements OnInit {
       this.isAuthenticated = response;
     })
   }
-  isTokenValid(){
-    if(this.authService.isTokenValid() && this.isAdmin){
+  generateRouteForCarsAdd(){
+    if(this.isTokenValid && this.isAdmin){
       this.router.navigate(['/cars/add']);
     }else{
-      this.authService.logout();
       this.router.navigate(['/login']);
     }
   }
+  isTokenValid(){
+    if(this.isAuthenticated){
+      if(this.authService.isTokenValid()){
+        return true;
+      }else{
+        this.isAdmin=false;
+        alert("Oturumun süresi doldu");
+        this.authService.logout();      
+        return false;
+      }
+    }
+    return false;
+  }
 
-  // async isUserAdmin(){
-  //   const userRole = await  this.authService.getUserRole();
-  //   if (userRole === 'admin') {
-  //     this.isAdmin = true;
-  //   }
-  // }
   async updateAdminState() {
     const userRole = await this.authService.getUserRole();
     if (userRole === 'admin') {
@@ -155,6 +122,68 @@ export class CarComponent implements OnInit {
       this.isAdmin = isAdmin;
     });
   }
+
+  //pagination start
+  setCurrentPage(page:number){
+    this.currentPage = page;
+  }
+  getCurrentPage(page:number){
+    if(this.currentPage == page){
+      return "list-group-item active"
+    }else{
+      return "list-group-item"
+    }
+  }
+  orderPages() {
+    this.pages = [];
+  
+    const maxVisiblePages = 3; // Görünen maksimum sayfa sayısı
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+  
+    if (this.pageCount - startPage < maxVisiblePages - 1) {
+      startPage = Math.max(1, this.pageCount - maxVisiblePages + 1);
+    }
+  
+    for (let i = startPage; i < startPage + maxVisiblePages && i <= this.pageCount; i++) {
+      this.pages.push(i);
+    }
+  }
+  nextPage(){
+    if(this.currentPage == this.pageCount){
+      return;
+    }
+    this.currentPage+=1;
+    if (this.currentColor) {
+      this.GetCarsWithColorPagination(this.currentPage);
+  } else if (this.currentBrand) {
+      this.GetCarsWithBrandPagination(this.currentPage);
+  } else {
+      this.GetCarsWithPagination(this.currentPage);
+  }
+  }
+  prevPage(){
+    if(this.currentPage==1){
+      return;
+    }
+    this.currentPage-=1;
+    if (this.currentColor) {
+      this.GetCarsWithColorPagination(this.currentPage);
+  } else if (this.currentBrand) {
+      this.GetCarsWithBrandPagination(this.currentPage);
+  } else {
+      this.GetCarsWithPagination(this.currentPage);
+  }
+  }
+  GetCarsWithPagination(page: number) {
+    this.currentPage = page;
+    this.carService.getCarsWithPagination(this.currentPage).subscribe(response => {
+      this.cars = response.data;
+      this.pageCount = this.cars[0].pageCount;
+      this.orderPages();
+      this.dataLoaded = true;
+    });
+  }
+  //pagination end
   getCars(){
     this.carService.getCars(). subscribe((response)=>{
       this.cars=response.data
@@ -171,19 +200,47 @@ export class CarComponent implements OnInit {
       this.colors = response.data;
     });
   }
-  getCarByColor(colorId:number){
-    this.carService.getCarsByColorId(colorId)
+  getCarByColor(colorId:number,page:number){
+    this.currentPage = page;
+    this.currentColor = colorId;
+    this.carService.getCarsByColorId(colorId,page)
     .subscribe((response)=>{
       this.cars=response.data;
+      this.pageCount = this.cars[0].pageCount;
+      this.orderPages();
       this.dataLoaded=true;
     })
   }
-  getCarsByBrand(brandId:number){
-    this.carService.getCarsByBrandId(brandId).subscribe(response => {
+  GetCarsWithColorPagination(page: number) {
+    this.currentPage = page;
+    this.carService.getCarsByColorId(this.currentColor, page) // Kaydedilmiş renk bilgisini kullan
+        .subscribe(response => {
+            this.cars = response.data;
+            this.pageCount = this.cars[0].pageCount;
+            this.orderPages();
+            this.dataLoaded = true;
+        });
+}
+  getCarsByBrand(brandId:number,page:number){
+    this.currentPage = page;
+    this.currentBrand = brandId;
+    this.carService.getCarsByBrandId(brandId,page).subscribe(response => {
       this.cars = response.data;
+      this.pageCount = this.cars[0].pageCount;
+      this.orderPages();
       this.dataLoaded = true;
     })
   }
+  GetCarsWithBrandPagination(page: number) {
+    this.currentPage = page;
+    this.carService.getCarsByBrandId(this.currentBrand, page)
+        .subscribe(response => {
+            this.cars = response.data;
+            this.pageCount = this.cars[0].pageCount;
+            this.orderPages();
+            this.dataLoaded = true;
+        });
+}
   getCarImage(car:Car){
     let path; 
     if (car.imagePath == null) {
@@ -211,7 +268,7 @@ export class CarComponent implements OnInit {
   }
   
   getCarById(carId:number){
-    this.carService.getCarsByBrandId(carId).subscribe(response => {
+    this.carService.getCarsByBrandId(carId,1).subscribe(response => {
       this.cars = response.data;
       
     })
@@ -225,11 +282,11 @@ export class CarComponent implements OnInit {
         colorId=null;
       })
     }else if(brandId==0 && colorId != 0){
-      this.getCarByColor(colorId);
+      this.getCarByColor(colorId,this.currentPage);
     }else if(brandId!=0 && colorId == 0){
-      this.getCarsByBrand(brandId);
+      this.getCarsByBrand(brandId,this.currentPage);
     }else{
-      this.getCars();
+      this.GetCarsWithPagination(this.currentPage);
     }
     
   }

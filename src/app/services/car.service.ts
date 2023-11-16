@@ -21,19 +21,23 @@ export class CarService {
     let newPath=this.apiUrl + "cars/getdetail"
     return this.httpClient.get<ListResponseModel<Car>>(newPath)
   }
+  getCarsWithPagination(page:number):Observable<ListResponseModel<Car>>{
+    let newPath=this.apiUrl + "cars/GetCarsWithPagination?page="+page;
+    return this.httpClient.get<ListResponseModel<Car>>(newPath)
+  }
 
   getCarById(carId:number):Observable<SingleResponseModel<Car>>{
     let newPath = this.apiUrl + "cars/getbyid?carId=" + carId
     return this.httpClient.get<SingleResponseModel<Car>>(newPath);
   }
 
-  getCarsByBrandId(brandId:number):Observable<ListResponseModel<Car>>{
-    let newPath=this.apiUrl + "cars/getcarsbybrandid?brandId="+brandId;
+  getCarsByBrandId(brandId:number, page:number):Observable<ListResponseModel<Car>>{
+    let newPath=this.apiUrl + "cars/getcarsbybrandid?brandId="+brandId+"&page="+page;
     return this.httpClient.get<ListResponseModel<Car>>(newPath)
   }
 
-  getCarsByColorId(colorId:number):Observable<ListResponseModel<Car>>{
-    let newPath=this.apiUrl + "cars/getcarsbycolorid?colorId="+colorId;
+  getCarsByColorId(colorId:number, page:number):Observable<ListResponseModel<Car>>{
+    let newPath=this.apiUrl + "cars/getcarsbycolorid?colorId="+colorId+"&page="+page;
     return this.httpClient.get<ListResponseModel<Car>>(newPath)
   }
 

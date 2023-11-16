@@ -96,22 +96,11 @@ export class AuthService {
     return this.isAuthenticatedSubject.asObservable();
   }
 
-  // isAuthenticated(){
-  //   if(localStorage.getItem("token")){
-  //     return true;
-  //   }else{
-  //     return false;
-  //   }
-  // }
 
   // Çıkış //////////////////
   logout(): void {
-    // Çıkış işlemleri burada gerçekleşir, örneğin localStorage'dan token'ı kaldırabilirsiniz.
     localStorage.removeItem('token');
     this.updateAuthState(false); // Çıkış yapıldığında durumu günceller.
     this.updateAdminState(false);
   }
-  // logOut() {
-  //   localStorage.removeItem("token");  
-  // }
 }

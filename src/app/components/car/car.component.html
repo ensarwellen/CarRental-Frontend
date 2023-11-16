@@ -98,7 +98,7 @@
       <button
         
         *ngIf="isAdmin"
-        (click)="isTokenValid()"
+        (click)="generateRouteForCarsAdd()"
         type="button"
         class="btn btn-success"
       >
@@ -159,3 +159,16 @@
       <br />
     </div>
   </div>
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      <li class="page-item"><a class="page-link" (click)="prevPage()">Previous</a></li>
+      <li (click)="setCurrentPage(page)" *ngFor="let page of pages" [class]= "getCurrentPage(page)">
+        <a class="page-link" 
+        (click)="currentColor ? GetCarsWithColorPagination(page) : (currentBrand ? GetCarsWithBrandPagination(page) : GetCarsWithPagination(page))">
+        {{ page }}
+        </a>
+
+      </li>
+      <li class="page-item"><a class="page-link" (click)="nextPage()">Next</a></li>
+    </ul>
+  </nav>
