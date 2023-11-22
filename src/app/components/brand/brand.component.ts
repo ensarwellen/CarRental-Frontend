@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Brand } from 'src/app/models/brand';
 import { BrandService } from 'src/app/services/brand.service';
+import { SelectionService } from 'src/app/services/selection.service';
 
 @Component({
   selector: 'app-brand',
@@ -11,8 +12,12 @@ export class BrandComponent implements OnInit{
 
   currentBrand:Brand | null;
   brands:Brand[]=[];
-  constructor(private brandService:BrandService){
-
+  constructor(private brandService:BrandService,private selectionService: SelectionService){
+    // Subscribe to brand changes
+  this.selectionService.brand$.subscribe((brand) => {
+    // Update the current brand in the component
+    this.currentBrand = brand;
+  });
   }
 
   ngOnInit(): void {
@@ -24,11 +29,14 @@ export class BrandComponent implements OnInit{
       
     })
   }
-  setCurrentBrand(brand:Brand){
-    this.currentBrand = brand;
+  setCurrentBrand(brand: Brand) {
+    // Set the current brand using the service
+    this.selectionService.setCurrentBrand(brand);
   }
-  clearCurrentBrand(){
-    this.currentBrand = null;
+  
+  clearCurrentBrand() {
+    // Clear the current brand using the service
+    this.selectionService.clearCurrentBrand();
   }
   getCurrentBrand(brand:Brand){
     if(brand==this.currentBrand){

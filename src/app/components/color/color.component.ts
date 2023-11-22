@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Color } from 'src/app/models/color';
 import { CarService } from 'src/app/services/car.service';
 import { ColorService } from 'src/app/services/color.service';
+import { SelectionService } from 'src/app/services/selection.service';
 
 @Component({
   selector: 'app-color',
@@ -14,7 +15,13 @@ export class ColorComponent implements OnInit {
   colors:Color[]=[];
 
   constructor(private colorService:ColorService,
-    private carService:CarService){}
+    private carService:CarService,private selectionService: SelectionService){
+      // Subscribe to color changes
+  this.selectionService.color$.subscribe((color) => {
+    // Update the current color in the component
+    this.currentColor = color;
+  });
+    }
   ngOnInit(): void {
     this.getColors();
   }
@@ -25,14 +32,15 @@ export class ColorComponent implements OnInit {
     });
   }
 
-  setCurrentColor(color:Color){
-    this.currentColor = color;
+  setCurrentColor(color: Color) {
+    // Set the current color using the service
+    this.selectionService.setCurrentColor(color);
   }
-
-  clearCurrentColor(){
-    this.currentColor = null;
+  
+  clearCurrentColor() {
+    // Clear the current color using the service
+    this.selectionService.clearCurrentColor();
   }
-
   getCurrentColor(color:Color){
     if(this.currentColor == color){
       return "list-group-item active"

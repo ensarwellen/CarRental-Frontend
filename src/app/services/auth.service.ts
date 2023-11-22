@@ -90,6 +90,7 @@ export class AuthService {
       );
   }
   isAuthenticated(): boolean {
+    //iki ünlem !! ifadeyi boolean değere dönüştürmeye yarar. Yani token varsa true, null, undefined, 0 veya boş string ise false döndürür.
     return !!localStorage.getItem('token');
   }
   isAuthenticatedObservable(): Observable<boolean> {
