@@ -1,0 +1,50 @@
+<div class="content">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="title">Kirala</h5>
+            </div>
+            <div class="card-body">
+                <form [formGroup]="rentalAddForm" (ngSubmit)="addRental()">
+                    <div class="mb-3">
+                        <label for="rentDate">Kiralama Tarihi:</label>
+                        <div class="form-group">
+                            <input type="date" id="rentDate" formControlName="rentDate" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="returnDate">İade tarihi:</label>
+                        <div class="form-group">
+                            <input type="date" id="returnDate" formControlName="returnDate" class="form-control"/>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-fill btn-primary">Kirala</button>
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="card-footer" *ngIf="isRented">
+                <h5>Araç aşağıdaki tarihler arasında kiralanmıştır. Lütfen belirtilen tarihlerin dışında bir tarih seçiniz.</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Kiralanma Tarihi</th>
+                            <th>İade Tarihi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let rental of tempRentals">
+                            <td>{{rental.rentDate | date: 'dd-MM-yyyy'}}</td>
+                            <td>{{rental.returnDate | date: 'dd-MM-yyyy'}}</td>
+                        </tr>
+                    </tbody>
+                    <td></td>
+                </table>               
+            </div>
+            
+        </div>
+    </div>
+    
+</div>
